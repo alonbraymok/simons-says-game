@@ -1,10 +1,14 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {GameBoardContainer, StartButtonWrapper} from './game.styled';
+import {
+  GameBoardContainer,
+  StartButtonWrapper,
+  ButtonWrapper,
+} from './game.styled';
 import SimonButton from '../../components/simon.button/simon.button';
 import StatsButton from '../../components/stats.button/stats.button';
-import {View, Button} from 'react-native';
+import {Alert} from 'react-native';
 
-const COLORS = ['blue', 'red', 'green', 'yellow'];
+const COLORS = ['#1736ff', '#ff2519', '#03fc52', '#ffe414'];
 
 function sleep(ms = 0) {
   return new Promise((r) => setTimeout(r, ms));
@@ -55,18 +59,47 @@ export default function Game({navigation}) {
           indexRef.current = 0;
         }
       } else {
-        alert('Reset Game');
-        navigation.push('Details');
-        setIsGameStarted(false);
-        initialAll();
+        Alert.alert(
+          `Your score ${gameIndex}`,
+          'Enter your name',
+          [
+            {
+              text: 'Ask me later',
+              onPress: () => console.log('Ask me later pressed'),
+            },
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => initialAll()},
+          ],
+          {cancelable: false},
+        );
       }
     }
   }
 
   function initialAll() {
+    navigation.push('Details');
+    setIsGameStarted(false);
     setIsUserTurn(false);
     indexRef.current = 0;
+    setGameIndex(0);
     setMovesArray([]);
+  }
+
+  function getBorderStyle(index) {
+    switch (index) {
+      case 0:
+        return 'borderTopLeftRadius';
+      case 1:
+        return 'borderTopRightRadius';
+      case 2:
+        return 'borderBottomLeftRadius';
+      default:
+        return 'borderBottomRightRadius';
+    }
   }
 
   function renderButtons() {
@@ -75,7 +108,7 @@ export default function Game({navigation}) {
         color={COLORS[index]}
         isUserTurn={isUserTurn}
         pressed={computerPress === index}
-        setComputerPress={setComputerPress}
+        border={getBorderStyle(index)}
         onPress={() => handleUserPress(index)}
       />
     ));
@@ -83,14 +116,16 @@ export default function Game({navigation}) {
 
   return (
     <GameBoardContainer>
-      <StartButtonWrapper>
-        <StatsButton
-          isGameStarted={isGameStarted}
-          status={gameIndex}
-          onPress={start}
-        />
-      </StartButtonWrapper>
-      {renderButtons()}
+      <ButtonWrapper>
+        {renderButtons()}
+        <StartButtonWrapper>
+          <StatsButton
+            isGameStarted={isGameStarted}
+            status={gameIndex}
+            onPress={start}
+          />
+        </StartButtonWrapper>
+      </ButtonWrapper>
     </GameBoardContainer>
   );
 }

@@ -9,5 +9,6 @@ export const ButtonContainer = styled.View`
 
 export const TouchableOpacityWrapper = styled.TouchableHighlight`
   width: 50%;
-  height: 45%;
+  height: 50%;
+  padding: 10px;
 `;
