@@ -7,8 +7,8 @@
  */
 
 import React from 'react';
-import Game from './src/screens/game/game';
+import Router from './router';
 
 export default function App() {
-  return <Game />;
+  return <Router />;
 }

@@ -10,7 +10,7 @@ function sleep(ms = 0) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-export default function Game() {
+export default function Game({navigation}) {
   const [isUserTurn, setIsUserTurn] = useState(false);
   const [movesArray, setMovesArray] = useState([]);
   const [computerPress, setComputerPress] = useState(null);
@@ -56,6 +56,7 @@ export default function Game() {
         }
       } else {
         alert('Reset Game');
+        navigation.push('Details');
         setIsGameStarted(false);
         initialAll();
       }
