@@ -1,4 +1,5 @@
 import {AsyncStorage} from 'react-native';
+import {filterUsersResult} from '../utils/objects';
 
 export async function storeData({key, value}) {
   const storageData = await retrieveData('results');
@@ -11,11 +12,17 @@ export async function storeData({key, value}) {
   const results = filterUsersResult(storageItem);
   try {
     await AsyncStorage.setItem(key, JSON.stringify(results));
-    // await AsyncStorage.removeItem(key);
     return results;
-  } catch (error) {
-    // Error saving data
-  }
+  } catch (error) {}
+}
+
+export async function removeData(key) {
+  try {
+    await AsyncStorage.removeItem(key);
+    return {
+      massage: 'Remove successfully',
+    };
+  } catch (error) {}
 }
 
 export async function retrieveData(key) {
@@ -24,21 +31,5 @@ export async function retrieveData(key) {
     if (value !== null) {
       return JSON.parse(value);
     }
-  } catch (error) {
-    // Error retrieving data
-  }
-}
-
-function filterUsersResult(data) {
-  let keysSorted = Object.keys(data).sort(function (a, b) {
-    return data[b] - data[a];
-  });
-
-  const filtered = Object.keys(data)
-    .filter((key) => keysSorted.slice(0, 10).includes(key))
-    .reduce((obj, key) => {
-      obj[key] = data[key];
-      return obj;
-    }, {});
-  return filtered;
+  } catch (error) {}
 }

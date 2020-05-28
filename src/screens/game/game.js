@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   GameBoardContainer,
   StartButtonWrapper,
@@ -6,18 +6,13 @@ import {
 } from './game.styled';
 import SimonButton from '../../components/simon.button/simon.button';
 import StatsButton from '../../components/stats.button/stats.button';
-import Sound from 'react-native-sound';
-import s from '../../assets/mp3/click.mp3';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import InputModal from '../../components/input.modal/input.modal';
 import {storeData} from '../../services/results';
 import {setResults} from '../../store/actions/result';
-
-const COLORS = ['#1736ff', '#ff2519', '#03fc52', '#ffe414'];
-
-function sleep(ms = 0) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+import {COLORS, DETAILS, RESULTS} from '../../utils/constants';
+import {getRandomNumber, sleep, playSound} from '../../utils/objects';
+import {getBorderStyle} from '../../utils/style';
 
 export default function Game({navigation}) {
   const [isUserTurn, setIsUserTurn] = useState(false);
@@ -28,15 +23,6 @@ export default function Game({navigation}) {
   const [showModal, setShowModal] = useState(false);
   const indexRef = useRef(0);
   const dispatch = useDispatch();
-  useEffect(() => {
-    const sound = new Sound(s);
-    Sound.setCategory('Playback');
-    sound.play();
-  }, [isUserTurn]);
-
-  function getRandomNumber() {
-    return Math.floor(Math.random() * 4);
-  }
 
   async function start() {
     if (!isGameStarted) {
@@ -51,6 +37,7 @@ export default function Game({navigation}) {
   async function renderComputerPress(moves) {
     for (let i = 0; i < moves.length; i++) {
       setComputerPress(moves[i]);
+      playSound();
       await sleep(800);
       setComputerPress(null);
       await sleep(200);
@@ -62,6 +49,7 @@ export default function Game({navigation}) {
 
   async function handleUserPress(index) {
     if (isUserTurn) {
+      playSound();
       if (index === movesArray[indexRef.current]) {
         indexRef.current = indexRef.current + 1;
         if (indexRef.current === movesArray.length) {
@@ -81,32 +69,19 @@ export default function Game({navigation}) {
       name,
       result: gameIndex,
     };
-    const results = await storeData({key: 'results', value: userResult});
+    const results = await storeData({key: RESULTS, value: userResult});
     dispatch(setResults(results));
     initialAll();
   }
 
   function initialAll() {
-    navigation.push('Details');
+    navigation.push(DETAILS);
     setIsGameStarted(false);
     setIsUserTurn(false);
     indexRef.current = 0;
     setGameIndex(0);
     setMovesArray([]);
     setShowModal(false);
-  }
-
-  function getBorderStyle(index) {
-    switch (index) {
-      case 0:
-        return 'borderTopLeftRadius';
-      case 1:
-        return 'borderTopRightRadius';
-      case 2:
-        return 'borderBottomLeftRadius';
-      default:
-        return 'borderBottomRightRadius';
-    }
   }
 
   function renderButtons() {
