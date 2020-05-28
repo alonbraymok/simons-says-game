@@ -1,5 +1,5 @@
 import {AsyncStorage} from 'react-native';
-import {filterUsersResult} from '../utils/objects';
+import {filterUsersResult} from '../utils/utils';
 
 export async function storeData({key, value}) {
   const storageData = await retrieveData('results');

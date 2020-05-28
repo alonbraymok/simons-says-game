@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StatsWrapper} from './stats.button.styled';
 import {Text, TouchableOpacity} from 'react-native';
 

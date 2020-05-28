@@ -6,12 +6,12 @@ import {
 } from './game.styled';
 import SimonButton from '../../components/simon.button/simon.button';
 import StatsButton from '../../components/stats.button/stats.button';
-import {useDispatch} from 'react-redux';
+import {useDispatch, batch} from 'react-redux';
 import InputModal from '../../components/input.modal/input.modal';
 import {storeData} from '../../services/results';
 import {setResults} from '../../store/actions/result';
 import {COLORS, DETAILS, RESULTS} from '../../utils/constants';
-import {getRandomNumber, sleep, playSound} from '../../utils/objects';
+import {getRandomNumber, sleep, playSound} from '../../utils/utils';
 import {getBorderStyle} from '../../utils/style';
 
 export default function Game({navigation}) {
@@ -29,6 +29,7 @@ export default function Game({navigation}) {
       setIsGameStarted(true);
     }
     await sleep(500);
+
     const newMoves = [...movesArray, getRandomNumber()];
     renderComputerPress(newMoves);
     setMovesArray(newMoves);
@@ -42,9 +43,10 @@ export default function Game({navigation}) {
       setComputerPress(null);
       await sleep(200);
     }
-
-    setIsUserTurn(true);
-    setComputerPress(null);
+    batch(() => {
+      setIsUserTurn(true);
+      setComputerPress(null);
+    });
   }
 
   async function handleUserPress(index) {
@@ -54,8 +56,10 @@ export default function Game({navigation}) {
         indexRef.current = indexRef.current + 1;
         if (indexRef.current === movesArray.length) {
           start();
-          setGameIndex(gameIndex + 1);
-          setIsUserTurn(false);
+          batch(() => {
+            setGameIndex(gameIndex + 1);
+            setIsUserTurn(false);
+          });
           indexRef.current = 0;
         }
       } else {
@@ -76,12 +80,14 @@ export default function Game({navigation}) {
 
   function initialAll() {
     navigation.push(DETAILS);
-    setIsGameStarted(false);
-    setIsUserTurn(false);
     indexRef.current = 0;
-    setGameIndex(0);
-    setMovesArray([]);
-    setShowModal(false);
+    batch(() => {
+      setIsGameStarted(false);
+      setIsUserTurn(false);
+      setGameIndex(0);
+      setMovesArray([]);
+      setShowModal(false);
+    });
   }
 
   function handleCancelNodal() {
@@ -92,6 +98,7 @@ export default function Game({navigation}) {
   function renderButtons() {
     return [1, 1, 1, 1].map((_, index) => (
       <SimonButton
+        key={index}
         color={COLORS[index]}
         isUserTurn={isUserTurn}
         pressed={computerPress === index}

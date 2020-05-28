@@ -2,7 +2,7 @@ import React from 'react';
 import {View, ScrollView} from 'react-native';
 import {useSelector} from 'react-redux';
 import Score from '../../components/score/score';
-import {sortObject} from '../../utils/objects';
+import {sortObject} from '../../utils/utils';
 
 export default function ResultsScreen() {
   const results = useSelector(({resultReducer}) => resultReducer.results);
@@ -11,7 +11,7 @@ export default function ResultsScreen() {
     let keyArray = sortObject(results);
 
     return keyArray.map((item, index) => (
-      <Score name={item} value={results[item]} index={index} />
+      <Score name={item} value={results[item]} key={index} index={index} />
     ));
   }
   return (

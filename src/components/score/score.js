@@ -12,7 +12,6 @@ const ScoreWrapper = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* justify-content: space-b; */
 `;
 
 const Icon = styled.Image`
