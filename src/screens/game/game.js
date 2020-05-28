@@ -84,6 +84,11 @@ export default function Game({navigation}) {
     setShowModal(false);
   }
 
+  function handleCancelNodal() {
+    setShowModal(false);
+    initialAll();
+  }
+
   function renderButtons() {
     return [1, 1, 1, 1].map((_, index) => (
       <SimonButton
@@ -104,13 +109,13 @@ export default function Game({navigation}) {
           <StatsButton
             isGameStarted={isGameStarted}
             status={gameIndex}
-            onPress={start}
+            onPress={isGameStarted ? null : start}
           />
         </StartButtonWrapper>
       </ButtonWrapper>
       <InputModal
         isDialogVisible={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={handleCancelNodal}
         title={`Your score ${gameIndex}`}
         onSubmit={handleModalSubmit}
       />
