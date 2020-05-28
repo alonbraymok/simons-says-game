@@ -10,15 +10,7 @@ import React from 'react';
 import Game from './src/screens/game/game';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {View, Text} from 'react-native';
-
-function DetailsScreen() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
+import ResultsScreen from './src/screens/result/result';
 
 const Stack = createStackNavigator();
 
@@ -27,7 +19,7 @@ export default function Router() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Simons Says" component={Game} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Details" component={ResultsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

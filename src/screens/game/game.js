@@ -6,10 +6,12 @@ import {
 } from './game.styled';
 import SimonButton from '../../components/simon.button/simon.button';
 import StatsButton from '../../components/stats.button/stats.button';
-import {Alert} from 'react-native';
 import Sound from 'react-native-sound';
 import s from '../../assets/mp3/click.mp3';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import InputModal from '../../components/input.modal/input.modal';
+import {storeData} from '../../services/results';
+import {setResults} from '../../store/actions/result';
 
 const COLORS = ['#1736ff', '#ff2519', '#03fc52', '#ffe414'];
 
@@ -23,8 +25,9 @@ export default function Game({navigation}) {
   const [computerPress, setComputerPress] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [gameIndex, setGameIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const indexRef = useRef(0);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const sound = new Sound(s);
     Sound.setCategory('Playback');
@@ -68,25 +71,19 @@ export default function Game({navigation}) {
           indexRef.current = 0;
         }
       } else {
-        Alert.alert(
-          `Your score ${gameIndex}`,
-          'Enter your name',
-          [
-            {
-              text: 'Ask me later',
-              onPress: () => console.log('Ask me later pressed'),
-            },
-            {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {text: 'OK', onPress: () => initialAll()},
-          ],
-          {cancelable: false},
-        );
+        setShowModal(true);
       }
     }
+  }
+
+  async function handleModalSubmit(name) {
+    const userResult = {
+      name,
+      result: gameIndex,
+    };
+    const results = await storeData({key: 'results', value: userResult});
+    dispatch(setResults(results));
+    initialAll();
   }
 
   function initialAll() {
@@ -96,6 +93,7 @@ export default function Game({navigation}) {
     indexRef.current = 0;
     setGameIndex(0);
     setMovesArray([]);
+    setShowModal(false);
   }
 
   function getBorderStyle(index) {
@@ -135,6 +133,12 @@ export default function Game({navigation}) {
           />
         </StartButtonWrapper>
       </ButtonWrapper>
+      <InputModal
+        isDialogVisible={showModal}
+        onClose={() => setShowModal(false)}
+        title={`Your score ${gameIndex}`}
+        onSubmit={handleModalSubmit}
+      />
     </GameBoardContainer>
   );
 }
