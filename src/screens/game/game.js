@@ -7,6 +7,10 @@ import {
 import SimonButton from '../../components/simon.button/simon.button';
 import StatsButton from '../../components/stats.button/stats.button';
 import {Alert} from 'react-native';
+import Sound from 'react-native-sound';
+import s from '../../assets/mp3/click.mp3';
+import {useSelector} from 'react-redux';
+// import userReducer from '../../store/reducers/user';
 
 const COLORS = ['#1736ff', '#ff2519', '#03fc52', '#ffe414'];
 
@@ -21,6 +25,16 @@ export default function Game({navigation}) {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [gameIndex, setGameIndex] = useState(0);
   const indexRef = useRef(0);
+
+  const user = useSelector(({userReducer}) => userReducer.user);
+
+  console.log(user);
+
+  useEffect(() => {
+    const sound = new Sound(s);
+    Sound.setCategory('Playback');
+    sound.play();
+  }, [isUserTurn]);
 
   function getRandomNumber() {
     return Math.floor(Math.random() * 4);

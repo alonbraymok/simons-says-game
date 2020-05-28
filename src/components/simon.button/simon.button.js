@@ -7,7 +7,7 @@ export default function SimonButton({color, onPress, pressed, border}) {
       <ButtonContainer
         color={color}
         pressed={pressed}
-        style={{[border]: 400}}
+        style={{[border]: 400, borderWidth: 5, borderColor: '#fff'}}
       />
     </TouchableOpacityWrapper>
   );
